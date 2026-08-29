@@ -1,2 +1,2 @@
 Flask
-playwright
+curl_cffi
