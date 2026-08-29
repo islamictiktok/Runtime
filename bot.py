@@ -9,36 +9,39 @@ app = Flask(__name__)
 # رابط موقعك
 URL = "https://btccryptoscan.42web.io/api.php?action=scan"
 
-# قيمة الكوكيز التي تم استخراجها من متصفحك (لتخطي الحماية)
+# الكوكيز الخاص بك
 TEST_COOKIE_VALUE = "77d33aa5d6eabcab5b54cac26dd8519e"
 
 def monitor_bot():
-    print("🚀 بدء المراقبة باستخدام تصريح الدخول (Cookie) السري...", flush=True)
+    print("🚀 بدء تشغيل محرك المراقبة مع تخطي جدار الحماية المتقدم...", flush=True)
     
-    # تنكر كمتصفح حقيقي
+    # بصمة متصفح أندرويد (نفس بيئة هاتفك) + ترويسة AJAX السحرية
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json'
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'  # هذه الترويسة تتخطى حماية InfinityFree
     }
     
-    # تمرير رخصة المرور للاستضافة لكي تتخطى صفحة الحماية
     cookies = {
         '__test': TEST_COOKIE_VALUE
     }
     
     while True:
         try:
-            response = requests.get(URL, headers=headers, cookies=cookies, timeout=10)
+            # استخدام POST بدلاً من GET هي ثغرة معروفة لتخطي حماية الاستضافات المجانية
+            response = requests.post(URL, headers=headers, cookies=cookies, timeout=10)
             
             try:
                 data = response.json()
                 msg = data.get('message', 'بدون رسالة')
                 print(f"✅ [نجاح] {msg}", flush=True)
             except ValueError:
-                print(f"⚠️ [رد غير متوقع] تم حظر الطلب أو الرد ليس JSON. كود الرد: {response.status_code}", flush=True)
+                # إذا تم الحظر، سنطبع أول 50 حرف لنرى ماذا ترد الاستضافة
+                text_snippet = response.text[:50].replace('\n', ' ')
+                print(f"⚠️ [تم الحظر] كود: {response.status_code} | الرد: {text_snippet}...", flush=True)
                 
         except requests.exceptions.RequestException as e:
-            print(f"❌ [خطأ اتصال] السيرفر لا يستجيب: {e}", flush=True)
+            print(f"❌ [خطأ اتصال]: {e}", flush=True)
         
         # الانتظار 5 ثوانٍ
         time.sleep(5)
