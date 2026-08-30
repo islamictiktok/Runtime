@@ -77,7 +77,7 @@ def monitor_bot():
             print(f"❌ [خطأ اتصال]: {e}", flush=True)
         
         # الانتظار 30 ثانية لتحديث البيانات دون التسبب في حظر موقعك
-        time.sleep(30)
+        time.sleep(15)
 
 threading.Thread(target=monitor_bot, daemon=True).start()
 
