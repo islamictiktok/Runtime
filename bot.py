@@ -8,7 +8,8 @@ from Crypto.Cipher import AES
 
 app = Flask(__name__)
 
-URL = "https://btccryptoscan.42web.io/api.php?action=scan"
+# تم تعديل الرابط ليعمل على http بدلاً من https
+URL = "http://btccryptoscan.42web.io/api.php?action=scan"
 
 def solve_infinityfree_challenge(html):
     """
@@ -76,7 +77,7 @@ def monitor_bot():
         except Exception as e:
             print(f"❌ [خطأ اتصال]: {e}", flush=True)
         
-        # الانتظار 30 ثانية لتحديث البيانات دون التسبب في حظر موقعك
+        # الانتظار 15 ثانية لتحديث البيانات دون التسبب في حظر موقعك
         time.sleep(15)
 
 threading.Thread(target=monitor_bot, daemon=True).start()
